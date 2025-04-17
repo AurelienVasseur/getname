@@ -15,6 +15,8 @@ import {
   AlertCircle,
   RefreshCw,
   Settings,
+  Plus,
+  X,
 } from "lucide-react";
 import {
   Tooltip,
@@ -45,12 +47,16 @@ export function SearchForm() {
   const [isSearching, setIsSearching] = useState(false);
   const [selectedExtensions, setSelectedExtensions] = useState<string[]>([".com", ".net", ".org", ".io"]);
   const [showExtensions, setShowExtensions] = useState(false);
+  const [customExtension, setCustomExtension] = useState("");
+  const [customExtensions, setCustomExtensions] = useState<string[]>([]);
 
   const defaultExtensions = [".com", ".net", ".org", ".io"];
   const availableExtensions = [
     ".com", ".net", ".org", ".io", ".info", ".biz", ".me", ".co", ".app", ".dev",
     ".cloud", ".site", ".online", ".store", ".shop", ".blog", ".tech", ".ai", ".xyz", ".eu"
   ];
+
+  const allExtensions = [...availableExtensions, ...customExtensions];
 
   const toggleExtension = (extension: string) => {
     setSelectedExtensions(prev => {
@@ -63,11 +69,29 @@ export function SearchForm() {
   };
 
   const selectAllExtensions = () => {
-    setSelectedExtensions([...availableExtensions]);
+    setSelectedExtensions([...allExtensions]);
   };
 
   const selectDefaultExtensions = () => {
     setSelectedExtensions([...defaultExtensions]);
+  };
+
+  const addCustomExtension = () => {
+    if (!customExtension) return;
+    
+    // Vérifier si l'extension commence par un point
+    const extension = customExtension.startsWith(".") ? customExtension : `.${customExtension}`;
+    
+    // Vérifier si l'extension n'existe pas déjà
+    if (!allExtensions.includes(extension)) {
+      setCustomExtensions(prev => [...prev, extension]);
+      setCustomExtension("");
+    }
+  };
+
+  const removeCustomExtension = (extension: string) => {
+    setCustomExtensions(prev => prev.filter(ext => ext !== extension));
+    setSelectedExtensions(prev => prev.filter(ext => ext !== extension));
   };
 
   const checkDomainAvailability = async (fullDomain: string) => {
@@ -246,17 +270,47 @@ export function SearchForm() {
               Extensions par défaut
             </Button>
           </div>
+          <div className="flex gap-2 mb-4">
+            <Input
+              type="text"
+              placeholder="Ajouter une extension (ex: .fr)"
+              value={customExtension}
+              onChange={(e) => setCustomExtension(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && addCustomExtension()}
+              className="h-9"
+            />
+            <Button
+              size="sm"
+              onClick={addCustomExtension}
+              disabled={!customExtension}
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
+          </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-2 p-4 bg-muted/50 rounded-lg">
-            {availableExtensions.map((extension) => (
+            {allExtensions.map((extension) => (
               <label
                 key={extension}
-                className="flex items-center space-x-2 cursor-pointer hover:bg-muted/80 p-2 rounded"
+                className="flex items-center space-x-2 cursor-pointer hover:bg-muted/80 p-2 rounded group"
               >
                 <Checkbox
                   checked={selectedExtensions.includes(extension)}
                   onCheckedChange={() => toggleExtension(extension)}
                 />
-                <span className="text-sm">{extension}</span>
+                <span className="text-sm flex-1">{extension}</span>
+                {customExtensions.includes(extension) && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      removeCustomExtension(extension);
+                    }}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                )}
               </label>
             ))}
           </div>
