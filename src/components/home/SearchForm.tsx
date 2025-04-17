@@ -195,7 +195,7 @@ export function SearchForm() {
               key={result.domain}
               className={`p-4 ${
                 result.error
-                  ? "opacity-80 cursor-pointer hover:opacity-100 transition-opacity"
+                  ? "opacity-90 cursor-pointer hover:opacity-100 transition-opacity"
                   : ""
               }`}
               onClick={() =>
@@ -211,7 +211,7 @@ export function SearchForm() {
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <div className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors">
+                          <div className="flex items-center gap-1.5 text-yellow-600 hover:text-yellow-500 transition-colors">
                             <AlertCircle className="h-5 w-5" />
                             <RefreshCw className="h-4 w-4" />
                           </div>
