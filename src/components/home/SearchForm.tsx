@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   CheckCircle2,
   XCircle,
@@ -13,6 +14,7 @@ import {
   Calendar,
   AlertCircle,
   RefreshCw,
+  Settings,
 } from "lucide-react";
 import {
   Tooltip,
@@ -41,6 +43,32 @@ export function SearchForm() {
   const [searchTerm, setSearchTerm] = useState("");
   const [domainResults, setDomainResults] = useState<DomainAvailability[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [selectedExtensions, setSelectedExtensions] = useState<string[]>([".com", ".net", ".org", ".io"]);
+  const [showExtensions, setShowExtensions] = useState(false);
+
+  const defaultExtensions = [".com", ".net", ".org", ".io"];
+  const availableExtensions = [
+    ".com", ".net", ".org", ".io", ".info", ".biz", ".me", ".co", ".app", ".dev",
+    ".cloud", ".site", ".online", ".store", ".shop", ".blog", ".tech", ".ai", ".xyz", ".eu"
+  ];
+
+  const toggleExtension = (extension: string) => {
+    setSelectedExtensions(prev => {
+      if (prev.includes(extension)) {
+        return prev.filter(ext => ext !== extension);
+      } else {
+        return [...prev, extension];
+      }
+    });
+  };
+
+  const selectAllExtensions = () => {
+    setSelectedExtensions([...availableExtensions]);
+  };
+
+  const selectDefaultExtensions = () => {
+    setSelectedExtensions([...defaultExtensions]);
+  };
 
   const checkDomainAvailability = async (fullDomain: string) => {
     const domainParts = fullDomain.split(".");
@@ -108,10 +136,10 @@ export function SearchForm() {
     if (!searchTerm) return;
 
     setIsSearching(true);
-    const extensions = [".com", ".net", ".org", ".io"];
+    setShowExtensions(false);
     const results: DomainAvailability[] = [];
 
-    for (const ext of extensions) {
+    for (const ext of selectedExtensions) {
       const domain = searchTerm.toLowerCase() + ext;
       results.push({
         domain,
@@ -163,14 +191,24 @@ export function SearchForm() {
   return (
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row gap-4 max-w-2xl mx-auto">
-        <Input
-          type="text"
-          placeholder="Entrez le nom que vous souhaitez vérifier..."
-          className="h-12 text-lg"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-        />
+        <div className="relative flex-1">
+          <Input
+            type="text"
+            placeholder="Entrez le nom que vous souhaitez vérifier..."
+            className="h-12 text-lg pr-12"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+          />
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute right-2 top-1/2 -translate-y-1/2"
+            onClick={() => setShowExtensions(!showExtensions)}
+          >
+            <Settings className="h-5 w-5" />
+          </Button>
+        </div>
         <Button
           size="lg"
           className="h-12"
@@ -187,6 +225,43 @@ export function SearchForm() {
           )}
         </Button>
       </div>
+
+      {showExtensions && (
+        <div className="max-w-2xl mx-auto">
+          <div className="flex gap-2 mb-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={selectAllExtensions}
+              className="text-xs"
+            >
+              Tout sélectionner
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={selectDefaultExtensions}
+              className="text-xs"
+            >
+              Extensions par défaut
+            </Button>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-2 p-4 bg-muted/50 rounded-lg">
+            {availableExtensions.map((extension) => (
+              <label
+                key={extension}
+                className="flex items-center space-x-2 cursor-pointer hover:bg-muted/80 p-2 rounded"
+              >
+                <Checkbox
+                  checked={selectedExtensions.includes(extension)}
+                  onCheckedChange={() => toggleExtension(extension)}
+                />
+                <span className="text-sm">{extension}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      )}
 
       {domainResults.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
