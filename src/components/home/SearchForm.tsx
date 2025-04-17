@@ -14,6 +14,12 @@ import {
   AlertCircle,
   RefreshCw,
 } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface WhoisDetails {
   registrar?: string;
@@ -85,7 +91,7 @@ export function SearchForm() {
         };
         return newResults;
       });
-    } catch (_) {
+    } catch {
       setDomainResults((prev) => {
         const newResults = [...prev];
         newResults[index] = {
@@ -129,7 +135,7 @@ export function SearchForm() {
           };
           return newResults;
         });
-      } catch (_) {
+      } catch {
         setDomainResults((prev) => {
           const newResults = [...prev];
           newResults[i] = {
@@ -202,15 +208,19 @@ export function SearchForm() {
                   {result.loading ? (
                     <Loader2 className="h-5 w-5 animate-spin" />
                   ) : result.error ? (
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-muted-foreground">
-                        {result.error}
-                      </span>
-                      <div className="flex items-center gap-1 text-muted-foreground">
-                        <RefreshCw className="h-4 w-4" />
-                        <AlertCircle className="h-4 w-4" />
-                      </div>
-                    </div>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors">
+                            <AlertCircle className="h-5 w-5" />
+                            <RefreshCw className="h-4 w-4" />
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Erreur lors de la vérification. Cliquez pour réessayer.</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   ) : result.available ? (
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-green-500">Disponible</span>
@@ -218,9 +228,7 @@ export function SearchForm() {
                     </div>
                   ) : (
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-red-500">
-                        Non disponible
-                      </span>
+                      <span className="text-sm text-red-500">Non disponible</span>
                       <XCircle className="h-5 w-5 text-red-500" />
                     </div>
                   )}
