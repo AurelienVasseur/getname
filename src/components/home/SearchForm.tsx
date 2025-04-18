@@ -17,6 +17,7 @@ import {
   Settings,
   Plus,
   X,
+  Clock,
 } from "lucide-react";
 import {
   Tooltip,
@@ -26,7 +27,6 @@ import {
 } from "@/components/ui/tooltip";
 import { SocialCheckResponse } from "@/types/social";
 import { SocialCheckService } from "@/services/socialCheck";
-import { SocialCheckResults } from "@/components/SocialCheckResults";
 
 interface WhoisDetails {
   registrar?: string;
@@ -334,8 +334,9 @@ export function SearchForm() {
         </div>
       )}
 
-      {domainResults.length > 0 && (
+      {(domainResults.length > 0 || (socialResults && !isCheckingSocial)) && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
+          {/* Résultats des domaines */}
           {domainResults.map((result, index) => (
             <Card
               key={result.domain}
@@ -423,18 +424,62 @@ export function SearchForm() {
               </div>
             </Card>
           ))}
+
+          {/* Résultats des réseaux sociaux */}
+          {socialResults && !isCheckingSocial && socialResults.results.map((result) => (
+            <Card key={result.network.name} className="p-4 col-span-2">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium">@{socialResults.username}</span>
+                    <span className="text-sm text-muted-foreground">sur {result.network.name}</span>
+                  </div>
+                  {result.network.isCheckAvailable ? (
+                    result.isAvailable ? (
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-green-500">Disponible</span>
+                        <CheckCircle2 className="h-5 w-5 text-green-500" />
+                      </div>
+                    ) : result.error ? (
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-yellow-600">Erreur</span>
+                        <AlertCircle className="h-5 w-5 text-yellow-600" />
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-red-500">Non disponible</span>
+                        <XCircle className="h-5 w-5 text-red-500" />
+                      </div>
+                    )
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-muted-foreground">Bientôt disponible</span>
+                      <Clock className="h-5 w-5 text-muted-foreground" />
+                    </div>
+                  )}
+                </div>
+                {result.url && (
+                  <div className="flex items-center gap-2 pt-2">
+                    <a
+                      href={result.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 hover:underline inline-flex items-center text-sm"
+                    >
+                      Voir le profil
+                      <ExternalLink className="h-4 w-4 ml-1" />
+                    </a>
+                  </div>
+                )}
+              </div>
+            </Card>
+          ))}
         </div>
       )}
 
-      {isCheckingSocial && (
+      {isCheckingSocial && domainResults.length === 0 && (
         <div className="flex justify-center mt-8">
           <Loader2 className="h-8 w-8 animate-spin" />
-        </div>
-      )}
-
-      {socialResults && !isCheckingSocial && (
-        <div className="mt-8">
-          <SocialCheckResults results={socialResults} />
         </div>
       )}
     </div>
