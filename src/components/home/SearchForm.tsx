@@ -448,7 +448,10 @@ export function SearchForm() {
 
           {/* Résultats des réseaux sociaux */}
           {isCheckingSocial && !socialResults && socialNetworks.map((network) => (
-            <Card key={network.name} className="p-4 col-span-2">
+            <Card 
+              key={network.name} 
+              className={`p-4 col-span-2 ${!network.isCheckAvailable ? 'opacity-60' : ''}`}
+            >
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -462,7 +465,10 @@ export function SearchForm() {
           ))}
 
           {socialResults && socialResults.results.map((result) => (
-            <Card key={result.network.name} className="p-4 col-span-2">
+            <Card 
+              key={result.network.name} 
+              className={`p-4 col-span-2 ${!result.network.isCheckAvailable ? 'opacity-60 hover:opacity-70 transition-opacity' : ''}`}
+            >
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
