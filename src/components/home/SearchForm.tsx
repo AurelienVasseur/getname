@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/tooltip";
 import { SocialCheckResponse } from "@/types/social";
 import { SocialCheckService } from "@/services/socialCheck";
+import { socialNetworks } from "@/config/socialNetworks";
 
 interface WhoisDetails {
   registrar?: string;
@@ -167,9 +168,9 @@ export function SearchForm() {
     setIsSearching(true);
     setIsCheckingSocial(true);
     setShowExtensions(false);
+    
+    // Initialiser les résultats des domaines
     const results: DomainAvailability[] = [];
-
-    // Vérification des noms de domaine
     for (const ext of selectedExtensions) {
       const domain = searchTerm.toLowerCase() + ext;
       results.push({
@@ -178,8 +179,19 @@ export function SearchForm() {
         loading: true,
       });
     }
-
     setDomainResults(results);
+
+    // Initialiser les résultats des réseaux sociaux avec état de chargement
+    setSocialResults({
+      username: searchTerm,
+      results: socialNetworks.map(network => ({
+        network,
+        isAvailable: false,
+        isCheckEnabled: network.isCheckAvailable,
+        loading: true
+      })),
+      timestamp: new Date().toISOString()
+    });
 
     // Vérification des noms de domaine
     for (let i = 0; i < results.length; i++) {
@@ -214,6 +226,15 @@ export function SearchForm() {
       setSocialResults(socialResponse);
     } catch (error) {
       console.error('Error checking social networks:', error);
+      // En cas d'erreur, on met à jour les résultats avec l'erreur
+      setSocialResults(prev => prev ? {
+        ...prev,
+        results: prev.results.map(result => ({
+          ...result,
+          loading: false,
+          error: "Erreur lors de la vérification"
+        }))
+      } : null);
     }
 
     setIsSearching(false);
@@ -334,7 +355,7 @@ export function SearchForm() {
         </div>
       )}
 
-      {(domainResults.length > 0 || (socialResults && !isCheckingSocial)) && (
+      {(domainResults.length > 0 || isCheckingSocial || socialResults) && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
           {/* Résultats des domaines */}
           {domainResults.map((result, index) => (
@@ -426,7 +447,21 @@ export function SearchForm() {
           ))}
 
           {/* Résultats des réseaux sociaux */}
-          {socialResults && !isCheckingSocial && socialResults.results.map((result) => (
+          {isCheckingSocial && !socialResults && socialNetworks.map((network) => (
+            <Card key={network.name} className="p-4 col-span-2">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium">@{searchTerm}</span>
+                    <span className="text-sm text-muted-foreground">sur {network.name}</span>
+                  </div>
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                </div>
+              </div>
+            </Card>
+          ))}
+
+          {socialResults && socialResults.results.map((result) => (
             <Card key={result.network.name} className="p-4 col-span-2">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -434,7 +469,9 @@ export function SearchForm() {
                     <span className="font-medium">@{socialResults.username}</span>
                     <span className="text-sm text-muted-foreground">sur {result.network.name}</span>
                   </div>
-                  {result.network.isCheckAvailable ? (
+                  {result.loading ? (
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                  ) : result.network.isCheckAvailable ? (
                     result.isAvailable ? (
                       <div className="flex items-center gap-2">
                         <span className="text-sm text-green-500">Disponible</span>
@@ -458,7 +495,7 @@ export function SearchForm() {
                     </div>
                   )}
                 </div>
-                {result.url && (
+                {!result.loading && result.url && (
                   <div className="flex items-center gap-2 pt-2">
                     <a
                       href={result.url}
@@ -477,7 +514,7 @@ export function SearchForm() {
         </div>
       )}
 
-      {isCheckingSocial && domainResults.length === 0 && (
+      {isCheckingSocial && domainResults.length === 0 && !socialResults && (
         <div className="flex justify-center mt-8">
           <Loader2 className="h-8 w-8 animate-spin" />
         </div>

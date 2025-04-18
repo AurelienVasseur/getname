@@ -15,6 +15,7 @@ export interface SocialCheckResult {
   url?: string;
   error?: string;
   isCheckEnabled: boolean;
+  loading?: boolean;
 }
 
 export interface SocialCheckResponse {
