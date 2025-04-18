@@ -2,6 +2,11 @@ export interface SocialNetwork {
   name: string;
   url: string;
   icon?: string;
+  errorType: 'status_code' | 'message';
+  errorMsg: string;
+  regexCheck: string;
+  urlMain: string;
+  isCheckAvailable: boolean;
 }
 
 export interface SocialCheckResult {
@@ -9,6 +14,7 @@ export interface SocialCheckResult {
   isAvailable: boolean;
   url?: string;
   error?: string;
+  isCheckEnabled: boolean;
 }
 
 export interface SocialCheckResponse {
