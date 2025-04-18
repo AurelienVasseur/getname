@@ -24,6 +24,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { SocialCheckResponse } from "@/types/social";
+import { SocialCheckService } from "@/services/socialCheck";
+import { SocialCheckResults } from "@/components/SocialCheckResults";
 
 interface WhoisDetails {
   registrar?: string;
@@ -49,6 +52,8 @@ export function SearchForm() {
   const [showExtensions, setShowExtensions] = useState(false);
   const [customExtension, setCustomExtension] = useState("");
   const [customExtensions, setCustomExtensions] = useState<string[]>([]);
+  const [socialResults, setSocialResults] = useState<SocialCheckResponse | null>(null);
+  const [isCheckingSocial, setIsCheckingSocial] = useState(false);
 
   const defaultExtensions = [".com", ".net", ".org", ".io"];
   const availableExtensions = [
@@ -160,9 +165,11 @@ export function SearchForm() {
     if (!searchTerm) return;
 
     setIsSearching(true);
+    setIsCheckingSocial(true);
     setShowExtensions(false);
     const results: DomainAvailability[] = [];
 
+    // Vérification des noms de domaine
     for (const ext of selectedExtensions) {
       const domain = searchTerm.toLowerCase() + ext;
       results.push({
@@ -174,6 +181,7 @@ export function SearchForm() {
 
     setDomainResults(results);
 
+    // Vérification des noms de domaine
     for (let i = 0; i < results.length; i++) {
       try {
         const result = await checkDomainAvailability(results[i].domain);
@@ -200,7 +208,16 @@ export function SearchForm() {
       }
     }
 
+    // Vérification des réseaux sociaux
+    try {
+      const socialResponse = await SocialCheckService.checkUsername(searchTerm);
+      setSocialResults(socialResponse);
+    } catch (error) {
+      console.error('Error checking social networks:', error);
+    }
+
     setIsSearching(false);
+    setIsCheckingSocial(false);
   };
 
   const formatDate = (dateString?: string) => {
@@ -406,6 +423,18 @@ export function SearchForm() {
               </div>
             </Card>
           ))}
+        </div>
+      )}
+
+      {isCheckingSocial && (
+        <div className="flex justify-center mt-8">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+      )}
+
+      {socialResults && !isCheckingSocial && (
+        <div className="mt-8">
+          <SocialCheckResults results={socialResults} />
         </div>
       )}
     </div>
