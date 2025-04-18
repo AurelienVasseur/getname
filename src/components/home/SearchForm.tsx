@@ -429,6 +429,37 @@ export function SearchForm() {
                           </span>
                         </div>
                       )}
+                      {result.details.nameServers && result.details.nameServers.length > 0 && (
+                        <div className="flex items-start gap-2">
+                          <Globe className="h-4 w-4 mt-1" />
+                          <div className="flex-1">
+                            <div className="flex items-center gap-1">
+                              <span>Name Servers:</span>
+                            </div>
+                            <ul className="text-xs space-y-0.5 mt-1">
+                              {result.details.nameServers.map((ns, i) => (
+                                <li key={i} className="flex items-center gap-1">
+                                  <span className="block w-1 h-1 rounded-full bg-muted-foreground"></span>
+                                  {ns}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      )}
+                      {result.details.status && result.details.status.length > 0 && (
+                        <div className="flex items-start gap-2">
+                          <Settings className="h-4 w-4 mt-1" />
+                          <div>
+                            <span className="block">Status:</span>
+                            <ul className="list-disc list-inside text-xs pl-2">
+                              {result.details.status.map((status, i) => (
+                                <li key={i}>{status}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      )}
                       <div className="flex items-center gap-2 pt-2">
                         <a
                           href={`https://${result.domain}`}
