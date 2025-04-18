@@ -356,12 +356,12 @@ export function SearchForm() {
       )}
 
       {(domainResults.length > 0 || isCheckingSocial || socialResults) && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-4xl mx-auto">
           {/* Domain Results */}
           {domainResults.map((result, index) => (
             <Card
               key={result.domain}
-              className={`p-4 ${
+              className={`p-4 col-span-1 md:col-span-1 ${
                 result.error
                   ? "opacity-90 cursor-pointer hover:opacity-100 transition-opacity"
                   : ""
@@ -481,7 +481,7 @@ export function SearchForm() {
           {isCheckingSocial && !socialResults && socialNetworks.map((network) => (
             <Card 
               key={network.name} 
-              className={`p-4 col-span-2 ${!network.isCheckAvailable ? 'opacity-60' : ''}`}
+              className={`p-4 col-span-1 md:col-span-2 ${!network.isCheckAvailable ? 'opacity-60' : ''}`}
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -498,7 +498,7 @@ export function SearchForm() {
           {socialResults && socialResults.results.map((result) => (
             <Card 
               key={result.network.name} 
-              className={`p-4 col-span-2 ${!result.network.isCheckAvailable ? 'opacity-60 hover:opacity-70 transition-opacity' : ''}`}
+              className={`p-4 col-span-1 md:col-span-2 ${!result.network.isCheckAvailable ? 'opacity-60 hover:opacity-70 transition-opacity' : ''}`}
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
