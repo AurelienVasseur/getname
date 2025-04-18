@@ -85,10 +85,10 @@ export function SearchForm() {
   const addCustomExtension = () => {
     if (!customExtension) return;
     
-    // Vérifier si l'extension commence par un point
+    // Check if the extension starts with a dot
     const extension = customExtension.startsWith(".") ? customExtension : `.${customExtension}`;
     
-    // Vérifier si l'extension n'existe pas déjà
+    // Check if the extension doesn't already exist
     if (!allExtensions.includes(extension)) {
       setCustomExtensions(prev => [...prev, extension]);
       setCustomExtension("");
@@ -102,8 +102,8 @@ export function SearchForm() {
 
   const checkDomainAvailability = async (fullDomain: string) => {
     const domainParts = fullDomain.split(".");
-    const zone = domainParts.pop(); // Obtient l'extension (.com, .net, etc.)
-    const searchTerm = domainParts.join("."); // Obtient le nom du domaine
+    const zone = domainParts.pop(); // Get the extension (.com, .net, etc.)
+    const searchTerm = domainParts.join("."); // Get the domain name
 
     const response = await fetch(
       `/api/check-domain?domain=${searchTerm}&zone=${zone}`
@@ -155,7 +155,7 @@ export function SearchForm() {
         newResults[index] = {
           ...newResults[index],
           loading: false,
-          error: "Erreur lors de la vérification",
+          error: "Error during verification",
         };
         return newResults;
       });
@@ -169,7 +169,7 @@ export function SearchForm() {
     setIsCheckingSocial(true);
     setShowExtensions(false);
     
-    // Initialiser les résultats des domaines
+    // Initialize domain results
     const results: DomainAvailability[] = [];
     for (const ext of selectedExtensions) {
       const domain = searchTerm.toLowerCase() + ext;
@@ -181,7 +181,7 @@ export function SearchForm() {
     }
     setDomainResults(results);
 
-    // Initialiser les résultats des réseaux sociaux avec état de chargement
+    // Initialize social network results with loading state
     setSocialResults({
       username: searchTerm,
       results: socialNetworks.map(network => ({
@@ -193,7 +193,7 @@ export function SearchForm() {
       timestamp: new Date().toISOString()
     });
 
-    // Vérification des noms de domaine
+    // Domain name verification
     for (let i = 0; i < results.length; i++) {
       try {
         const result = await checkDomainAvailability(results[i].domain);
@@ -213,26 +213,26 @@ export function SearchForm() {
           newResults[i] = {
             ...newResults[i],
             loading: false,
-            error: "Erreur lors de la vérification",
+            error: "Error during verification",
           };
           return newResults;
         });
       }
     }
 
-    // Vérification des réseaux sociaux
+    // Social network verification
     try {
       const socialResponse = await SocialCheckService.checkUsername(searchTerm);
       setSocialResults(socialResponse);
     } catch (error) {
       console.error('Error checking social networks:', error);
-      // En cas d'erreur, on met à jour les résultats avec l'erreur
+      // In case of error, update results with error
       setSocialResults(prev => prev ? {
         ...prev,
         results: prev.results.map(result => ({
           ...result,
           loading: false,
-          error: "Erreur lors de la vérification"
+          error: "Error during verification"
         }))
       } : null);
     }
@@ -256,7 +256,7 @@ export function SearchForm() {
         <div className="relative flex-1">
           <Input
             type="text"
-            placeholder="Entrez le nom que vous souhaitez vérifier..."
+            placeholder="Enter the name you want to verify..."
             className="h-12 text-lg pr-12"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -280,10 +280,10 @@ export function SearchForm() {
           {isSearching ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Vérification...
+              Verifying...
             </>
           ) : (
-            "Vérifier"
+            "Verify"
           )}
         </Button>
       </div>
@@ -297,7 +297,7 @@ export function SearchForm() {
               onClick={selectAllExtensions}
               className="text-xs"
             >
-              Tout sélectionner
+              Select All
             </Button>
             <Button
               variant="outline"
@@ -305,13 +305,13 @@ export function SearchForm() {
               onClick={selectDefaultExtensions}
               className="text-xs"
             >
-              Extensions par défaut
+              Default Extensions
             </Button>
           </div>
           <div className="flex gap-2 mb-4">
             <Input
               type="text"
-              placeholder="Ajouter une extension (ex: .fr)"
+              placeholder="Add a new extension (ex: .fr)"
               value={customExtension}
               onChange={(e) => setCustomExtension(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && addCustomExtension()}
@@ -357,7 +357,7 @@ export function SearchForm() {
 
       {(domainResults.length > 0 || isCheckingSocial || socialResults) && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
-          {/* Résultats des domaines */}
+          {/* Domain Results */}
           {domainResults.map((result, index) => (
             <Card
               key={result.domain}
@@ -385,18 +385,18 @@ export function SearchForm() {
                           </div>
                         </TooltipTrigger>
                         <TooltipContent>
-                          <p>Erreur lors de la vérification. Cliquez pour réessayer.</p>
+                          <p>Error during verification. Click to try again.</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
                   ) : result.available ? (
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-green-500">Disponible</span>
+                      <span className="text-sm text-green-500">Available</span>
                       <CheckCircle2 className="h-5 w-5 text-green-500" />
                     </div>
                   ) : (
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-red-500">Non disponible</span>
+                      <span className="text-sm text-red-500">Unavailable</span>
                       <XCircle className="h-5 w-5 text-red-500" />
                     </div>
                   )}
@@ -416,7 +416,7 @@ export function SearchForm() {
                         <div className="flex items-center gap-2">
                           <Calendar className="h-4 w-4" />
                           <span>
-                            Créé le: {formatDate(result.details.creationDate)}
+                            Created: {formatDate(result.details.creationDate)}
                           </span>
                         </div>
                       )}
@@ -424,7 +424,7 @@ export function SearchForm() {
                         <div className="flex items-center gap-2">
                           <Calendar className="h-4 w-4" />
                           <span>
-                            Expire le:{" "}
+                            Expires:{" "}
                             {formatDate(result.details.expirationDate)}
                           </span>
                         </div>
@@ -436,7 +436,7 @@ export function SearchForm() {
                           rel="noopener noreferrer"
                           className="text-blue-500 hover:underline inline-flex items-center"
                         >
-                          Visiter le site
+                          Visit Site
                           <ExternalLink className="h-4 w-4 ml-1" />
                         </a>
                       </div>
@@ -446,7 +446,7 @@ export function SearchForm() {
             </Card>
           ))}
 
-          {/* Résultats des réseaux sociaux */}
+          {/* Social Network Results */}
           {isCheckingSocial && !socialResults && socialNetworks.map((network) => (
             <Card 
               key={network.name} 
@@ -456,7 +456,7 @@ export function SearchForm() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="font-medium">@{searchTerm}</span>
-                    <span className="text-sm text-muted-foreground">sur {network.name}</span>
+                    <span className="text-sm text-muted-foreground">on {network.name}</span>
                   </div>
                   <Loader2 className="h-5 w-5 animate-spin" />
                 </div>
@@ -473,30 +473,30 @@ export function SearchForm() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="font-medium">@{socialResults.username}</span>
-                    <span className="text-sm text-muted-foreground">sur {result.network.name}</span>
+                    <span className="text-sm text-muted-foreground">on {result.network.name}</span>
                   </div>
                   {result.loading ? (
                     <Loader2 className="h-5 w-5 animate-spin" />
                   ) : result.network.isCheckAvailable ? (
                     result.isAvailable ? (
                       <div className="flex items-center gap-2">
-                        <span className="text-sm text-green-500">Disponible</span>
+                        <span className="text-sm text-green-500">Available</span>
                         <CheckCircle2 className="h-5 w-5 text-green-500" />
                       </div>
                     ) : result.error ? (
                       <div className="flex items-center gap-2">
-                        <span className="text-sm text-yellow-600">Erreur</span>
+                        <span className="text-sm text-yellow-600">Error</span>
                         <AlertCircle className="h-5 w-5 text-yellow-600" />
                       </div>
                     ) : (
                       <div className="flex items-center gap-2">
-                        <span className="text-sm text-red-500">Non disponible</span>
+                        <span className="text-sm text-red-500">Unavailable</span>
                         <XCircle className="h-5 w-5 text-red-500" />
                       </div>
                     )
                   ) : (
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-muted-foreground">Bientôt disponible</span>
+                      <span className="text-sm text-muted-foreground">Soon Available</span>
                       <Clock className="h-5 w-5 text-muted-foreground" />
                     </div>
                   )}
@@ -509,7 +509,7 @@ export function SearchForm() {
                       rel="noopener noreferrer"
                       className="text-blue-500 hover:underline inline-flex items-center text-sm"
                     >
-                      Voir le profil
+                      View Profile
                       <ExternalLink className="h-4 w-4 ml-1" />
                     </a>
                   </div>

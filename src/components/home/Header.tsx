@@ -18,7 +18,7 @@ export function Header() {
               </div>
             </TooltipTrigger>
             <TooltipContent>
-              <p>Créateur de GetName</p>
+              <p>Creator of GetName</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

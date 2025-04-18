@@ -22,22 +22,22 @@ export function DisclaimerModal() {
         </DialogHeader>
         <div className="space-y-4 py-4">
           <p className="text-sm text-muted-foreground">
-            Les informations fournies par ce service sont à titre informatif et indicatif uniquement. 
-            Bien que nous utilisions plusieurs sources de données (WHOIS, DNS, etc.) pour effectuer 
-            nos vérifications, nous ne pouvons garantir une fiabilité à 100%.
+            The information provided by this service is for informational and indicative purposes only. 
+            Although we use multiple data sources (WHOIS, DNS, etc.) to perform our checks, 
+            we cannot guarantee 100% reliability.
           </p>
           <p className="text-sm text-muted-foreground">
-            Notre système effectue des vérifications basées sur :
+            Our system performs checks based on:
           </p>
           <ul className="list-disc list-inside text-sm text-muted-foreground space-y-2">
-            <li>Les données WHOIS des domaines</li>
-            <li>Les enregistrements DNS</li>
-            <li>Les informations de propriété des noms de domaine</li>
+            <li>Domain WHOIS data</li>
+            <li>DNS records</li>
+            <li>Domain name ownership information</li>
           </ul>
           <p className="text-sm text-muted-foreground">
-            Ces données peuvent être incomplètes, inexactes ou ne pas refléter la situation actuelle. 
-            Nous vous recommandons de toujours vérifier ces informations auprès des sources officielles 
-            ou des registrars concernés.
+            This data may be incomplete, inaccurate, or may not reflect the current situation. 
+            We recommend that you always verify this information with official sources 
+            or the relevant registrars.
           </p>
         </div>
       </DialogContent>

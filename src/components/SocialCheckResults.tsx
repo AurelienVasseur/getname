@@ -12,7 +12,7 @@ export function SocialCheckResults({ results }: SocialCheckResultsProps) {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Résultats pour @{results.username}</CardTitle>
+        <CardTitle>Results for @{results.username}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid gap-4">
@@ -27,23 +27,23 @@ export function SocialCheckResults({ results }: SocialCheckResultsProps) {
                   result.isAvailable ? (
                     <Badge variant="success" className="flex items-center gap-1">
                       <CheckCircle className="w-4 h-4" />
-                      Disponible
+                      Available
                     </Badge>
                   ) : result.error ? (
                     <Badge variant="destructive" className="flex items-center gap-1">
                       <AlertCircle className="w-4 h-4" />
-                      Erreur
+                      Error
                     </Badge>
                   ) : (
                     <Badge variant="secondary" className="flex items-center gap-1">
                       <XCircle className="w-4 h-4" />
-                      Non disponible
+                      Not available
                     </Badge>
                   )
                 ) : (
                   <Badge variant="secondary" className="flex items-center gap-1">
                     <Clock className="w-4 h-4" />
-                    Bientôt disponible
+                    Coming soon
                   </Badge>
                 )}
               </div>
@@ -54,7 +54,7 @@ export function SocialCheckResults({ results }: SocialCheckResultsProps) {
                   rel="noopener noreferrer"
                   className="text-sm text-blue-500 hover:underline"
                 >
-                  Voir le profil
+                  View profile
                 </a>
               )}
             </div>
