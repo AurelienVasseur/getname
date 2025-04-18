@@ -1,6 +1,7 @@
 import { Header } from "@/components/home/Header"
 import { SearchForm } from "@/components/home/SearchForm"
 import { Features } from "@/components/home/Features"
+import { SocialCheckForm } from '@/components/SocialCheckForm'
 
 export default function Home() {
   return (
@@ -18,6 +19,7 @@ export default function Home() {
             
             <SearchForm />
             <Features />
+            <SocialCheckForm />
           </div>
         </section>
       </main>
